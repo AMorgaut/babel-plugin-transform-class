@@ -11,30 +11,26 @@ export default function (babel) {
   
   function objectAssign(target, members) {
     return t.expressionStatement(t.callExpression(
-      t.memberExpression(
-        t.identifier("Object"), 
-        t.identifier("assign")
-      ),
-      [target, members]
+      // Object.assign(target, members)
+      t.memberExpression(t.identifier("Object"), t.identifier("assign")), [target, t.objectExpression(members)]
     ));
   }
   
-  function objectCreate(proto) {
+  function objectCreate(parentClass) {
     return t.callExpression(
-      t.memberExpression(
-        t.identifier("Object"), 
-        t.identifier("create")
-      ),
-      [proto]
+      // Object.create(parentClass)
+      t.memberExpression(t.identifier("Object"), t.identifier("create")), [parentClass]
     );
   }
   
   function assign(key, value) {
+    // key = value
     return t.expressionStatement(t.assignmentExpression('=', key, value));
   }
   
   function es5Method(method) {
     var id = method.key;
+    // foo: function foo(args) {/* code */}
     return t.objectProperty(id, t.functionExpression(id, method.params, method.body));
   }
   
@@ -43,7 +39,8 @@ export default function (babel) {
         path, 
         id: path.node.id, 
         parentId: path.node.superClass || t.identifier('Function'),
-        statics: [], methods: [] };
+        statics: [], methods: [] 
+      };
   }
   
   function superCall(path) {
@@ -52,51 +49,37 @@ export default function (babel) {
       targetPath = path.parentPath;
       method = targetPath.node.property;
       targetPath = targetPath.parentPath;
-      // ParentClass.prototype.methodName
-      superTarget = t.memberExpression(
-        t.memberExpression(_class.parentId, t.identifier("prototype")), method
+      // ParentClass.prototype.methodName.apply(this, args)
+      superTarget = t.memberExpression(t.memberExpression(t.memberExpression(
+        _class.parentId, t.identifier("prototype")), method), t.identifier('apply')
       );
     } else {
       targetPath = path.parentPath;
-      // ParentClass.call
-      superTarget = t.memberExpression(_class.parentId, t.identifier("call"));
+      // ParentClass.apply(this, args)
+      superTarget = t.memberExpression(_class.parentId, t.identifier("apply"));
     }
     args = [t.Identifier('this')].concat(targetPath.node.arguments);
-    targetPath.replaceWith(
-      t.callExpression(superTarget, args)
-    );
+    targetPath.replaceWith(t.callExpression(superTarget, args));
   }
   
   function exportClass(t, path, _class) {
     // constructeur
-    var 
-        _export = [_class.constructor],
-        proto;
+    var _export = [_class.constructor];
     // parent class
     if (_class.parentId) {
-      // MyClass.prototype = Object.create(MyParentClass);
-      _export.push(assign(
-          t.memberExpression(_class.id, prototype), 
-          objectCreate(_class.parentId)
-      ));
+      // MyClass.type = Object.create(MyParentClass);
+      _export.push( assign(t.memberExpression(_class.id, prototype), objectCreate(_class.parentId)) );
     }
     // methods
     if (_class.methods.length > 0) {
       // Object.assign(MyClass.prototype, { /* my methods *//});
-      _export.push(objectAssign(
-          t.memberExpression(_class.id, prototype), 
-          t.objectExpression(_class.methods)
-      ));
+      _export.push( objectAssign(t.memberExpression(_class.id, prototype), _class.methods) );
     }
     // statics
     if (_class.statics.length > 0) {
       // Object.assign(MyClass, { /* my statics *//});
-      _export.push(objectAssign(
-        _class.id, 
-        t.objectExpression(_class.statics)
-      ));
+      _export.push( objectAssign(_class.id, _class.statics) );
     }
-    
     return path.replaceWithMultiple(_export);
   }
   
@@ -104,13 +87,9 @@ export default function (babel) {
     name: "transform-class",
     visitor: {
         // separate export from class declaration
-      ExportDefaultDeclaration: function ExportDefaultDeclaration(path) {
-        if (!path.get("declaration").isClassDeclaration()) {
-          return;
-        }
-        var node = path.node;
-        var ref = node.declaration.id || path.scope.generateUidIdentifier("class");
-        console.log('ExportDefaultDeclaration ref', ref);
+      ExportDefaultDeclaration(path) {
+        if (!path.get("declaration").isClassDeclaration()) { return; }
+        var node = path.node, ref = node.declaration.id || path.scope.generateUidIdentifier("class");
         path.replaceWith(node.declaration);
         // put export before class declaration
         path.insertBefore(t.exportDefaultDeclaration(ref));
@@ -121,27 +100,17 @@ export default function (babel) {
         exit(path)  {exportClass(t, path, _class)}
       },
       // SUPER CALL
-      Super(path) {
-       console.log('Super Call', path.node);
-        superCall(path);
-      },
+      Super(path) { superCall(path); },
       // METHODS
       ClassMethod(path) {
         var node = path.node;
-        // CONSTRUCTOR
-        if (node.kind === 'constructor') {
-          console.log('Constructor', node);
-          _class.constructor = t.functionDeclaration(_class.id,  node.params, node.body);
-          return;
+        if (node.kind === 'constructor') { // CONSTRUCTOR
+          _class.constructor = t.functionDeclaration(_class.id,  node.params, node.body); return;
         }
-        // STATIC METHODS
-        if (node.static) {
-          console.log('Static Method', node);
-          _class.statics.push(es5Method(node));
-          return;
+        if (node.static) { // STATIC METHODS
+          _class.statics.push(es5Method(node)); return;
         }
         // PROTOTYPE METHODS
-        console.log(path.type, node);
         _class.methods.push(es5Method(node));
       }
     }
