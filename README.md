@@ -11,20 +11,25 @@ Use this transform plugin if you like what it generates for you. The generated c
 So, this transform plugin purely concentrate itself on the ES6 class notation including support of:
 
 1. the `class` Declarations & Expressions & its constructor, using `function MyClass(args) {/* code */}`
-2. its `extends` inheritance, using `MyClass.prototype = Object.create(ParentClass);`
+2. its `extends` inheritance, using `MyClass.prototype = Object.create(ParentClass.prototype);`
 3. its class methods, using `Object.assign(MyClass.prototype, {/* methods */});`
 4. its `statics` methods assigned, using `Object.assign(MyClass, {/* methods */}`
-5. the method shortands notation, making `foo() {/* code */}` become `foo: function foo() {/* code */}`
-6. its constructor `super(args)` call, using `ParentClass.call(this, args)` 
-7. its method `super.methodName(args)` call, using `ParentClass.prototype.methodName.call(this, args)` 
+5. the method shortands notation, making `foo() {/* code */}` become `foo: function foo() {/* code */}` (to get function name support)
+6. its constructor `super(arg1, arg2)` call, using `ParentClass.call(this, arg1, arg2)` 
+7. its method `super.methodName(arg1, arg2)` call, using `ParentClass.prototype.methodName.call(this, arg1, arg2)` 
+8. its `new.target` property, currently using `this.constructor`
 
-It does not inject any helper function
+To get a better idea of the result, you can try it there: https://astexplorer.net/#/gist/0178b41edea28820b2452e3422059cbd/latest
+
+**It does not inject any helper function**
 
 > class properties notation will be potentially added, as well as decorators
 
 ## Dependencies
 
-This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included).
+This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, use the one of your choice).
+
+The `Object.create()` call only use the first parameter (prototype), so their is no need to  
 
 ## Limitations / differences with the ES6 standard
 
