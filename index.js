@@ -118,8 +118,13 @@ export default function (babel) {
     var _es5Class = [_class.constructor], MyClass = _class.id;
     // parent class
     if (_class.parentId) {
-      // MyClass.prototype = Object.create(MyParentClass);
-      _es5Class.push( assign( expression(MyClass, 'prototype'), objectCreate(_class.parentId) ));
+      // MyClass.prototype = Object.create(MyParentClass.prototype);
+      _es5Class.push( assign( 
+        expression(MyClass, 'prototype'), 
+        objectCreate(expression(_class.parentId, 'prototype')) 
+      ));
+      // force the prototype.constructor property to make new.target / this.constructor valid
+      _class.methods.push(t.objectProperty(t.identifier('constructor'), MyClass));
     }
     // methods
     if (_class.methods.length > 0) {
