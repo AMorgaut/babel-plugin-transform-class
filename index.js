@@ -1,25 +1,85 @@
 export default function (babel) {
 
-  const 
-      t = babel.types,
-      prototype = t.identifier("prototype");
-      
-  var
-      _class,
-      superIdentifier;
+  const t = babel.types;
+  var visitor, _class;
   
+  visitor = {
+    // CLASS
+    ClassDeclaration: {
+      enter(path) {
+        _class = {id: path.node.id, parentId: path.node.superClass, statics: [], methods: []};
+      },
+      exit(path) {
+        path.replaceWithMultiple(es5Class(_class));
+      }
+    },
+    // SUPER CALL
+    Super: superCall,
+    // NEW.TARGET
+    MetaProperty(path) {
+      var node = path.node;
+      if (node.meta.name === "new" && node.property.name === "target") {
+        path.replaceWith(expression('this.constructor'));
+      }
+    },
+    // METHODS
+    ClassMethod(path) {
+      var node = path.node;
+      if (node.kind === 'constructor') { 
+        // CONSTRUCTOR
+        _class.constructor = t.functionDeclaration(_class.id,  node.params, node.body); 
+        return;
+      }
+      if (node.static) { 
+        // STATIC METHODS
+        _class.statics.push(es5Method(node)); 
+        return;
+      }
+      // PROTOTYPE METHODS
+      _class.methods.push(es5Method(node));
+    }
+  };
+  
+  // Utils
+  
+  function isString(value) {
+      return typeof value === 'string';
+  }
+  function isMember(value) {
+      return value.type = 'MemberExpression';
+  }
+  
+  function toIdentifier(key) {
+    return t.identifier(key)
+  }
+  
+  function toMember(target, property) {
+    return t.memberExpression(target, property);
+  }
+  
+  function expression() {
+    var index = arguments.length - 1, members = [], member;
+    do {
+      member = arguments[index];
+      members = isString(member) ?
+        members.concat(member.split('.').reverse().map(toIdentifier)) :
+        members.concat([member]);
+      index--;
+    } while (index > -1);
+    return members.reduceRight(toMember);
+  }
   
   function objectAssign(target, members) {
     return t.expressionStatement(t.callExpression(
       // Object.assign(target, members)
-      t.memberExpression(t.identifier("Object"), t.identifier("assign")), [target, t.objectExpression(members)]
+      expression("Object.assign"), [target, t.objectExpression(members)]
     ));
   }
   
   function objectCreate(parentClass) {
     return t.callExpression(
       // Object.create(parentClass)
-      t.memberExpression(t.identifier("Object"), t.identifier("create")), [parentClass]
+      expression("Object.create"), [parentClass]
     );
   }
   
@@ -34,85 +94,48 @@ export default function (babel) {
     return t.objectProperty(id, t.functionExpression(id, method.params, method.body));
   }
   
-  function createClass(path) {
-      return { 
-        path, 
-        id: path.node.id, 
-        parentId: path.node.superClass || t.identifier('Function'),
-        statics: [], methods: [] 
-      };
-  }
-  
   function superCall(path) {
-    var targetPath, superTarget, method, args = [];
+    var 
+        targetPath = path.parentPath,
+        ParentClass = _class.parentId,
+        caller, method;
     if (path.parent.type ==="MemberExpression") {
-      targetPath = path.parentPath;
       method = targetPath.node.property;
       targetPath = targetPath.parentPath;
-      // ParentClass.prototype.methodName.apply(this, args)
-      superTarget = t.memberExpression(t.memberExpression(t.memberExpression(
-        _class.parentId, t.identifier("prototype")), method), t.identifier('apply')
-      );
+      // caller => ParentClass.prototype.methodName.call
+      caller = expression(ParentClass, 'prototype', method, 'call');
     } else {
-      targetPath = path.parentPath;
-      // ParentClass.apply(this, args)
-      superTarget = t.memberExpression(_class.parentId, t.identifier("apply"));
+      // caller => ParentClass.call
+      caller = expression(ParentClass, 'call');
     }
-    args = [t.Identifier('this')].concat(targetPath.node.arguments);
-    targetPath.replaceWith(t.callExpression(superTarget, args));
+    targetPath.replaceWith(t.callExpression(
+      // {super target}.apply(this, args)
+      caller, [t.Identifier('this')].concat(targetPath.node.arguments)
+    ));
   }
   
-  function exportClass(t, path, _class) {
-    // constructeur
-    var _export = [_class.constructor];
+  function es5Class(_class) {
+    var _es5Class = [_class.constructor], MyClass = _class.id;
     // parent class
     if (_class.parentId) {
-      // MyClass.type = Object.create(MyParentClass);
-      _export.push( assign(t.memberExpression(_class.id, prototype), objectCreate(_class.parentId)) );
+      // MyClass.prototype = Object.create(MyParentClass);
+      _es5Class.push( assign( expression(MyClass, 'prototype'), objectCreate(_class.parentId) ));
     }
     // methods
     if (_class.methods.length > 0) {
       // Object.assign(MyClass.prototype, { /* my methods *//});
-      _export.push( objectAssign(t.memberExpression(_class.id, prototype), _class.methods) );
+      _es5Class.push( objectAssign(expression(MyClass, 'prototype'), _class.methods) );
     }
     // statics
     if (_class.statics.length > 0) {
       // Object.assign(MyClass, { /* my statics *//});
-      _export.push( objectAssign(_class.id, _class.statics) );
+      _es5Class.push( objectAssign(MyClass, _class.statics) );
     }
-    return path.replaceWithMultiple(_export);
+    return _es5Class;
   }
   
   return {
     name: "transform-class",
-    visitor: {
-        // separate export from class declaration
-      ExportDefaultDeclaration(path) {
-        if (!path.get("declaration").isClassDeclaration()) { return; }
-        var node = path.node, ref = node.declaration.id || path.scope.generateUidIdentifier("class");
-        path.replaceWith(node.declaration);
-        // put export before class declaration
-        path.insertBefore(t.exportDefaultDeclaration(ref));
-      },
-      // CLASS
-      ClassDeclaration: {
-        enter(path) {_class = createClass(path)},
-        exit(path)  {exportClass(t, path, _class)}
-      },
-      // SUPER CALL
-      Super(path) { superCall(path); },
-      // METHODS
-      ClassMethod(path) {
-        var node = path.node;
-        if (node.kind === 'constructor') { // CONSTRUCTOR
-          _class.constructor = t.functionDeclaration(_class.id,  node.params, node.body); return;
-        }
-        if (node.static) { // STATIC METHODS
-          _class.statics.push(es5Method(node)); return;
-        }
-        // PROTOTYPE METHODS
-        _class.methods.push(es5Method(node));
-      }
-    }
+    visitor: visitor
   };
 }
