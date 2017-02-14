@@ -12,28 +12,31 @@ So, this transform plugin purely concentrate itself on the ES6 class notation in
 
 1. the `class` Declarations & Expressions & its constructor, using `function MyClass(args) {/* code */}`
 2. its `extends` inheritance, using `MyClass.prototype = Object.create(ParentClass.prototype);`
-3. its class methods, using `Object.assign(MyClass.prototype, {/* methods */});`
-4. its `statics` methods assigned, using `Object.assign(MyClass, {/* methods */}`
-5. the method shortands notation, making `foo() {/* code */}` become `foo: function foo() {/* code */}` (to get function name support)
-6. its constructor `super(arg1, arg2)` call, using `ParentClass.call(this, arg1, arg2)` 
+3. its constructor `super(arg1, arg2)` call, using `ParentClass.call(this, arg1, arg2)` 
+4. its `new.target` property, currently using `this.constructor`
+5. its class methods, using `Object.assign(MyClass.prototype, {/* methods */});`
+6. the method shortands notation, making `foo() {/* code */}` become `foo: function foo() {/* code */}` (to get function name support)
 7. its method `super.methodName(arg1, arg2)` call, using `ParentClass.prototype.methodName.call(this, arg1, arg2)` 
-8. its `new.target` property, currently using `this.constructor`
+8. its `statics` methods assigned, using `Object.assign(MyClass, {/* methods */}`
 
-To get a better idea of the result, you can try it there: https://astexplorer.net/#/gist/0178b41edea28820b2452e3422059cbd/latest
+To get a better idea of the result, you can play with it there: https://astexplorer.net/#/gist/0178b41edea28820b2452e3422059cbd/latest
 
-**It does not inject any helper function**
+It use  only one traverse visitor and... **It does not inject any helper function**
 
-> class properties notation will be potentially added, as well as decorators
+## Up to come
+
+Tests are on the way. Looking on a potential way to 
+ECMAScript stage 2 class properties notation and decorators may be potentially added as they make sense to complete class definition
 
 ## Dependencies
 
 This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, use the one of your choice).
 
-The `Object.create()` call only use the first parameter (prototype), so their is no need to  
+The `Object.create(prototype, properties)` call currently only use the first parameter (prototype), so their is no need to include polyfil support of its second argument (the properties object definitions) for now. 
 
-## Limitations / differences with the ES6 standard
+## Choosen Limitations from the ES6 standard
 
-1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `DOM` etc 
+1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `DOM` Objects, etc 
 2. It does not support expressions as parent class, only class/constructor names
 3. It does not support getter/setter (they often are bad patterns, source of bugs, leaks, performance failures)
 4. It does not throw errors if you invoke the constructor without the new keyword (Linters are good enough to check that)
