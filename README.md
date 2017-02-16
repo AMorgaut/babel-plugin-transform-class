@@ -1,7 +1,6 @@
-[![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
-
-
 # babel-plugin-transform-class
+[![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
+[![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
 
 > A minimalist ES6 class babel transformer
 
@@ -31,6 +30,69 @@ It use  only one traverse visitor and... **It does not inject any helper functio
 Tests are on the way. Looking on a potential way to
 ECMAScript stage 2 class properties notation and decorators may be potentially added as they make sense to complete class definition
 
+## Example
+
+**In**
+
+```js
+class AbstractClass {
+  constructor(a) {}
+  publicMethod(foo, bar) {
+    console.log('Abstract', new.target);
+    this.bar = bar;
+  }
+}
+
+class MyClass extends AbstractClass {
+    static staticMethod(a, b) {
+      console.log('static', a, b);
+    }
+    constructor(a) {
+        super(a);
+        this.bar = 51;
+    }
+    publicMethod(foo, bar) {
+      super.publicMethod(foo, bar);
+      console.log('MyClass', new.target);
+    }
+}
+```
+
+**Out**
+
+```js
+function AbstractClass(a) {}
+
+Object.assign(AbstractClass.prototype, {
+  publicMethod: function publicMethod(foo, bar) {
+    console.log('Abstract', this.constructor);
+    this.bar = bar;
+  }
+});
+
+function MyClass(a) {
+    AbstractClass.call(this, a);
+    this.bar = 51;
+}
+
+MyClass.prototype = Object.create(AbstractClass.prototype);
+
+Object.assign(MyClass.prototype, {
+  publicMethod: function publicMethod(foo, bar) {
+    AbstractClass.prototype.publicMethod.call(this, foo, bar);
+    console.log('MyClass', this.constructor);
+  },
+
+  constructor: MyClass
+});
+
+Object.assign(MyClass, {
+  staticMethod: function staticMethod(a, b) {
+    console.log('static', a, b);
+  }
+});
+```
+
 ## Dependencies
 
 This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, use the one of your choice).
@@ -48,8 +110,8 @@ The `Object.create(prototype, properties)` call currently only use the first par
 
 ## Installation
 
-```bash
-npm install babel-plugin-transform-class
+```sh
+$ npm install babel-plugin-transform-class
 ```
 
 ## Usage
@@ -67,7 +129,7 @@ npm install babel-plugin-transform-class
 ### Via CLI
 
 ```sh
-babel --plugins transform-class script.js
+$ babel --plugins transform-class script.js
 ```
 
 ### Via Node API
