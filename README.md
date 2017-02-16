@@ -1,3 +1,6 @@
+[![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
+
+
 # babel-plugin-transform-class
 
 > A minimalist ES6 class babel transformer
@@ -25,18 +28,18 @@ It use  only one traverse visitor and... **It does not inject any helper functio
 
 ## Up to come
 
-Tests are on the way. Looking on a potential way to 
+Tests are on the way. Looking on a potential way to
 ECMAScript stage 2 class properties notation and decorators may be potentially added as they make sense to complete class definition
 
 ## Dependencies
 
 This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, use the one of your choice).
 
-The `Object.create(prototype, properties)` call currently only use the first parameter (prototype), so their is no need to include polyfil support of its second argument (the properties object definitions) for now. 
+The `Object.create(prototype, properties)` call currently only use the first parameter (prototype), so their is no need to include polyfil support of its second argument (the properties object definitions) for now.
 
 ## Choosen Limitations from the ES6 standard
 
-1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `DOM` Objects, etc 
+1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `DOM` Objects, etc
 2. It does not support expressions as parent class, only class/constructor names
 3. It does not support getter/setter (they often are bad patterns, source of bugs, leaks, performance failures)
 4. It does not throw errors if you invoke the constructor without the new keyword (Linters are good enough to check that)
@@ -45,7 +48,9 @@ The `Object.create(prototype, properties)` call currently only use the first par
 
 ## Installation
 
-Not yet on npm. Just get it from this repository for now
+```bash
+npm install babel-plugin-transform-class
+```
 
 ## Usage
 
