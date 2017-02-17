@@ -3,7 +3,7 @@
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
 [![Build Status](https://secure.travis-ci.org/AMorgaut/babel-plugin-transform-class?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
 
-> A minimalist ES6 class babel transformer
+> A minimalist ES6 class babel transformer 
 
 ## Overview
 
