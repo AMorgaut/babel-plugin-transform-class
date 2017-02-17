@@ -1,7 +1,7 @@
 # babel-plugin-transform-class
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
-[![Build Status](https://secure.travis-ci.org/AMorgaut/html5-udp-socket.png?branch=master)](https://travis-ci.org/AMorgaut/html5-udp-socket)
+[![Build Status](https://secure.travis-ci.org/AMorgaut/babel-plugin-transform-class?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
 
 > A minimalist ES6 class babel transformer
 
