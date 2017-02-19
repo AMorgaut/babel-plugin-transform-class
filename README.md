@@ -3,7 +3,7 @@
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
 [![Build Status](https://api.travis-ci.org/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
 
-> A minimalist ES6 class babel transformer 
+> A minimalist ES6 class babel transformer
 
 ## Overview
 
@@ -72,21 +72,18 @@ Object.assign(AbstractClass.prototype, {
 });
 
 function MyClass(a) {
-    AbstractClass.call(this, a);
-    this.bar = 51;
+  AbstractClass.call(this, a);
+  this.bar = 51;
 }
 
 MyClass.prototype = Object.create(AbstractClass.prototype);
-
 Object.assign(MyClass.prototype, {
   publicMethod: function publicMethod(foo, bar) {
     AbstractClass.prototype.publicMethod.call(this, foo, bar);
     console.log('MyClass', this.constructor);
   },
-
   constructor: MyClass
 });
-
 Object.assign(MyClass, {
   staticMethod: function staticMethod(a, b) {
     console.log('static', a, b);
