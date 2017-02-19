@@ -5,15 +5,12 @@ function Test() {
 }
 
 Test.prototype = Object.create(Foo.prototype);
-
 Object.assign(Test.prototype, {
   test: function test() {
     Foo.prototype.test.call(this);
   },
-
   constructor: Test
 });
-
 Object.assign(Test, {
   foo: function foo() {
     Foo.prototype.foo.call(this);
