@@ -8,7 +8,7 @@ function trim(str) {
   return str.replace(/^\s+|\s+$/, '');
 }
 
-describe('Add traits support to ECMAScript classes', () => {
+describe('Compile ES2015 classes to ES5 or ES3 + polyfill', () => {
   const fixturesDir = path.join(__dirname, 'fixtures');
   fs.readdirSync(fixturesDir).map((caseName) => {
     it(`should ${caseName.split('-').join(' ')}`, () => {
