@@ -2,7 +2,7 @@ export default function (babel) {
 
   const t = babel.types;
   var visitor, _class;
-  
+
   visitor = {
     // CLASS
     ClassDeclaration: {
@@ -10,6 +10,7 @@ export default function (babel) {
         _class = {id: path.node.id, parentId: path.node.superClass, statics: [], methods: []};
       },
       exit(path) {
+        //console.log(es5Class(_class));
         path.replaceWithMultiple(es5Class(_class));
       }
     },
@@ -25,38 +26,38 @@ export default function (babel) {
     // METHODS
     ClassMethod(path) {
       var node = path.node;
-      if (node.kind === 'constructor') { 
+      if (node.kind === 'constructor') {
         // CONSTRUCTOR
-        _class.constructor = t.functionDeclaration(_class.id,  node.params, node.body); 
+        _class.constructor = t.functionDeclaration(_class.id,  node.params, node.body);
         return;
       }
-      if (node.static) { 
+      if (node.static) {
         // STATIC METHODS
-        _class.statics.push(es5Method(node)); 
+        _class.statics.push(es5Method(node));
         return;
       }
       // PROTOTYPE METHODS
       _class.methods.push(es5Method(node));
     }
   };
-  
+
   // Utils
-  
+
   function isString(value) {
       return typeof value === 'string';
   }
   function isMember(value) {
       return value.type = 'MemberExpression';
   }
-  
+
   function toIdentifier(key) {
     return t.identifier(key)
   }
-  
+
   function toMember(target, property) {
     return t.memberExpression(target, property);
   }
-  
+
   function expression() {
     var index = arguments.length - 1, members = [], member;
     do {
@@ -68,34 +69,34 @@ export default function (babel) {
     } while (index > -1);
     return members.reduceRight(toMember);
   }
-  
+
   function objectAssign(target, members) {
     return t.expressionStatement(t.callExpression(
       // Object.assign(target, members)
       expression("Object.assign"), [target, t.objectExpression(members)]
     ));
   }
-  
+
   function objectCreate(parentClass) {
     return t.callExpression(
       // Object.create(parentClass)
       expression("Object.create"), [parentClass]
     );
   }
-  
+
   function assign(key, value) {
     // key = value
     return t.expressionStatement(t.assignmentExpression('=', key, value));
   }
-  
+
   function es5Method(method) {
     var id = method.key;
     // foo: function foo(args) {/* code */}
     return t.objectProperty(id, t.functionExpression(id, method.params, method.body));
   }
-  
+
   function superCall(path) {
-    var 
+    var
         targetPath = path.parentPath,
         ParentClass = _class.parentId,
         caller, method;
@@ -113,18 +114,24 @@ export default function (babel) {
       caller, [t.Identifier('this')].concat(targetPath.node.arguments)
     ));
   }
-  
+
   function es5Class(_class) {
-    var _es5Class = [_class.constructor], MyClass = _class.id;
+    var _es5Class = [], MyClass = _class.id;
+    // constructor
+    if (!_class.hasOwnProperty('constructor')) {
+        _class.constructor = t.functionDeclaration(_class.id, [], t.blockStatement([]));
+    }
+    _es5Class.push(_class.constructor);
     // parent class
     if (_class.parentId) {
       // MyClass.prototype = Object.create(MyParentClass.prototype);
-      _es5Class.push( assign( 
-        expression(MyClass, 'prototype'), 
-        objectCreate(expression(_class.parentId, 'prototype')) 
+      _es5Class.push( assign(
+        expression(MyClass, 'prototype'),
+        objectCreate(expression(_class.parentId, 'prototype'))
       ));
-      // force the prototype.constructor property to make new.target / this.constructor valid
-      _class.methods.push(t.objectProperty(t.identifier('constructor'), MyClass));
+      _class.methods.push(t.objectProperty(
+        t.identifier('constructor'), MyClass
+      ));
     }
     // methods
     if (_class.methods.length > 0) {
@@ -136,9 +143,10 @@ export default function (babel) {
       // Object.assign(MyClass, { /* my statics *//});
       _es5Class.push( objectAssign(MyClass, _class.statics) );
     }
+
     return _es5Class;
   }
-  
+
   return {
     name: "transform-class",
     visitor: visitor
