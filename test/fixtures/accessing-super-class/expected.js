@@ -13,6 +13,6 @@ Object.assign(Test.prototype, {
 });
 Object.assign(Test, {
   foo: function foo() {
-    Foo.prototype.foo.call(this);
+    Foo.foo.call(this);
   }
 });
