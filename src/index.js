@@ -103,8 +103,13 @@ export default function (babel) {
     if (path.parent.type ==="MemberExpression") {
       method = targetPath.node.property;
       targetPath = targetPath.parentPath;
-      // caller => ParentClass.prototype.methodName.call
-      caller = expression(ParentClass, 'prototype', method, 'call');
+      if (path.getFunctionParent().node.static) {
+        // caller => ParentClass.methodName.call
+        caller = expression(ParentClass, method, 'call');
+      } else {
+        // caller => ParentClass.prototype.methodName.call
+        caller = expression(ParentClass, 'prototype', method, 'call');
+      }
     } else {
       // caller => ParentClass.call
       caller = expression(ParentClass, 'call');
