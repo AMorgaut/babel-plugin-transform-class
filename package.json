@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-transform-class",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Compile ES2015 classes to ES5 or ES3 + polyfill",
   "keywords": [
     "babel-plugin",
