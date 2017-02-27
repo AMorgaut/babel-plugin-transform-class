@@ -19,7 +19,8 @@ It use  only one traverse visitor and... **It does not inject any helper functio
 
 The `class` Declaration & its `constructor`, become function declarations
 ```js
-function MyClass(args) {/* code */}```
+function MyClass(args) {/* code */}
+```
 
 ### Prototype methods
 
@@ -28,13 +29,15 @@ The class methods are assigned to the constructor prototype using `Object.assign
 ```js
 Object.assign(MyClass.prototype, {
     foo: function foo() {/* code */}
-});```
+});
+```
 
 ### Static methods
 
 The `statics` methods are assigned to the constructor using `Object.assign`.
 ```js
-Object.assign(MyClass, {/* static methods */});```
+Object.assign(MyClass, {/* static methods */});
+```
 
 ### Prototype inheritance
 
@@ -45,7 +48,8 @@ MyClass.prototype = Object.create(ParentClass.prototype);
 Object.assign(MyClass.prototype, {
     foo: function foo() {/* code */},
     constructor: MyClass
-});```
+});
+```
 
 ### `new.target`
 
@@ -166,7 +170,8 @@ $ babel --plugins transform-class script.js
 ### Via Node API
 
 ```javascript
-require("babel-core").transform("code", {
+require("babel-core")
+.transform("class A extends B { constructor() { super(); }}", {
   plugins: ["transform-class"]
 });
 ```
