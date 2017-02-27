@@ -11,20 +11,53 @@ Transpiler are very powerful, but can be frustrating when generated code do not 
 
 Use this transform plugin if you like what it generates for you. The generated code is ES3 compliant as long as you also add the required polyfills.
 
-So, this transform plugin purely concentrate itself on the ES6 class notation including support of:
-
-1. the `class` Declarations & Expressions & its constructor, using `function MyClass(args) {/* code */}`
-2. its `extends` inheritance, using `MyClass.prototype = Object.create(ParentClass.prototype);`
-3. its constructor `super(arg1, arg2)` call, using `ParentClass.call(this, arg1, arg2)` 
-4. its `new.target` property, currently using `this.constructor`
-5. its class methods, using `Object.assign(MyClass.prototype, {/* methods */});`
-6. the method shortands notation, making `foo() {/* code */}` become `foo: function foo() {/* code */}` (to get function name support)
-7. its method `super.methodName(arg1, arg2)` call, using `ParentClass.prototype.methodName.call(this, arg1, arg2)` 
-8. its `statics` methods assigned, using `Object.assign(MyClass, {/* methods */}`
-
-To get a better idea of the result, you can play with it there: https://astexplorer.net/#/gist/0178b41edea28820b2452e3422059cbd/latest
+So, this transform plugin purely concentrate itself on the ES6 class notation.
 
 It use  only one traverse visitor and... **It does not inject any helper function**
+
+### Class / Constructor
+
+The `class` Declaration & its `constructor`, become function declarations
+```js
+function MyClass(args) {/* code */}```
+
+### Prototype methods
+
+The class methods are assigned to the constructor prototype using `Object.assign(MyClass.prototype, {/* methods */});`. The method shortand notation `foo() {/* code */}` becomes `foo: function foo() {/* code */}` (to get function name support)
+
+```js
+Object.assign(MyClass.prototype, {
+    foo: function foo() {/* code */}
+});```
+
+### Static methods
+
+The `statics` methods are assigned to the constructor using `Object.assign`.
+```js
+Object.assign(MyClass, {/* static methods */});```
+
+### Prototype inheritance
+
+The prototype inheritance declared by the ES6 `extends` instruction use `Object.create()` to create the `prototype` of the class: `MyClass.prototype = Object.create(ParentClass.prototype);`. The class constructor is fixed back using `Object.assign()` along the method definitions.
+
+```js
+MyClass.prototype = Object.create(ParentClass.prototype);
+Object.assign(MyClass.prototype, {
+    foo: function foo() {/* code */},
+    constructor: MyClass
+});```
+
+### `new.target`
+
+The `new.target` property, is transpiled to  `this.constructor`. As, with pure function constructor based prototype inheritance, the `this` instance is created by the child class, and given to the parent class constructor & methods (see `super`), `this.constructor` refers to the child class prototype constructor property, itself fixed to the child class function itself, matching to the constructor invoked by `new`.
+
+### Constructor, methods, & static methods `super` call
+
+The constructor `super(arg1, arg2)` call is transpiled to `ParentClass.call(this, arg1, arg2)`, the method `super.methodName(arg1, arg2)` call, to `ParentClass.prototype.methodName.call(this, arg1, arg2)`, and the `static` method `super.methodName(arg1, arg2)` call, to `ParentClass.methodName.call(this, arg1, arg2)`.
+
+## Let's play
+
+To get a better idea of the result, you can play with it there: https://astexplorer.net/#/gist/0178b41edea28820b2452e3422059cbd/latest
 
 ## Up to come
 
@@ -95,11 +128,11 @@ Object.assign(MyClass, {
 
 This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, use the one of your choice).
 
-The `Object.create(prototype, properties)` call currently only use the first parameter (prototype), so their is no need to include polyfil support of its second argument (the properties object definitions) for now.
+The `Object.create(prototype, properties)` call currently only use the first parameter (prototype), so their is no need to include polyfill support of its second argument (the properties object definitions) for now.
 
-## Choosen Limitations from the ES6 standard
+## Chosen Limitations from the ES6 standard
 
-1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `DOM` Objects, etc
+1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `Function` Objects, etc
 2. It does not support expressions as parent class, only class/constructor names
 3. It does not support getter/setter (they often are bad patterns, source of bugs, leaks, performance failures)
 4. It does not throw errors if you invoke the constructor without the new keyword (Linters are good enough to check that)
