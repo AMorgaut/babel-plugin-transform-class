@@ -2,7 +2,7 @@
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
 [![Build Status](https://api.travis-ci.org/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
-[![Coverage Status](https://coveralls.io/repos/github/AMorgaut/babel-plugin-transform-class/badge.svg?branch=Add-coverage-badge)](https://coveralls.io/github/AMorgaut/babel-plugin-transform-class?branch=Add-coverage-badge)
+[![Coverage Status](https://coveralls.io/repos/github/AMorgaut/babel-plugin-transform-class/badge.svg?branch=master)](https://coveralls.io/github/AMorgaut/babel-plugin-transform-class?branch=master)
 
 > A minimalist ES6 class babel transformer
 
@@ -66,8 +66,8 @@ To get a better idea of the result, you can play with it there: https://astexplo
 
 ## Up to come
 
-Tests are on the way. Looking on a potential way to
-ECMAScript stage 2 class properties notation and decorators may be potentially added as they make sense to complete class definition
+* Sourcemap tests (to check impact of transformations approaches on babel sourcemap generation)
+* ECMAScript stage 2 class properties notation and decorators may be potentially added as they make sense to complete class definition
 
 ## Example
 
@@ -137,7 +137,7 @@ The `Object.create(prototype, properties)` call currently only use the first par
 
 ## Chosen Limitations from the ES6 standard
 
-1. This transform plugin do not properly subclassed native Objects such as `Date`, `Array`, `Function` Objects, etc
+1. This transform plugin do not properly extends native Objects such as `Date`, `Array`, `Function`, etc
 2. It does not support expressions as parent class, only class/constructor names
 3. It does not support getter/setter (they often are bad patterns, source of bugs, leaks, performance failures)
 4. It does not throw errors if you invoke the constructor without the new keyword (Linters are good enough to check that)
