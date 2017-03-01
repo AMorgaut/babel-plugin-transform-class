@@ -46,9 +46,6 @@ export default function (babel) {
   function isString(value) {
       return typeof value === 'string';
   }
-  function isMember(value) {
-      return value.type = 'MemberExpression';
-  }
 
   function toIdentifier(key) {
     return t.identifier(key)
