@@ -2,6 +2,7 @@
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
 [![Build Status](https://api.travis-ci.org/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
+[![Coverage Status](https://coveralls.io/repos/github/AMorgaut/babel-plugin-transform-class/badge.svg?branch=Add-coverage-badge)](https://coveralls.io/github/AMorgaut/babel-plugin-transform-class?branch=Add-coverage-badge)
 
 > A minimalist ES6 class babel transformer
 
