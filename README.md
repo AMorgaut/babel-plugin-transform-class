@@ -10,7 +10,7 @@
 
 Transpiler are very powerful, but can be frustrating when generated code do not fit to what we'd like.
 
-Use this transform plugin if you like what it generates for you. The generated code is ES3 compliant as long as you also add the required polyfills.
+Use this transform plugin if you like what it generates for you. The generated code is ES3 compliant as long as you also add [the 2 required polyfills](https://github.com/AMorgaut/babel-plugin-transform-class/wiki).
 
 So, this transform plugin purely concentrate itself on the ES6 class notation.
 
@@ -131,7 +131,7 @@ Object.assign(MyClass, {
 
 ## Dependencies
 
-This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, use the one of your choice).
+This transform plugin requires the JS target environment to at least support `Object.create()` & `Object.assign()`, either natively or via a polyfill (polyfills are intentionally not included, [use the one of your choice](https://github.com/AMorgaut/babel-plugin-transform-class/wiki)).
 
 The `Object.create(prototype, properties)` call currently only use the first parameter (prototype), so their is no need to include polyfill support of its second argument (the properties object definitions) for now.
 
