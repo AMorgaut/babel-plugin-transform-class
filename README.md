@@ -14,7 +14,7 @@ Use this transform plugin if you like what it generates for you. The generated c
 
 So, this transform plugin purely concentrate itself on the ES6 class notation.
 
-It use  only one traverse visitor and... **It does not inject any helper function**
+It uses only one traverse visitor and... **It does not inject any helper function**
 
 ### Class / Constructor
 
@@ -137,12 +137,29 @@ The `Object.create(prototype, properties)` call currently only use the first par
 
 ## Chosen Limitations from the ES6 standard
 
-1. This transform plugin do not properly extends native Objects such as `Date`, `Array`, `Function`, etc
+Many ES6 class features may either be checked at edit time instead of runtime or lead to dangerous and/or not reviewer friendly code patterns.
+
+Here an example of some class related ESLint options:
+
+* [require constructor names to begin with a capital letter (new-cap)](http://eslint.org/docs/rules/new-cap)
+* [Verify calls of super() in constructors (constructor-super)](http://eslint.org/docs/rules/constructor-super)
+* [Disallow modifying variables of class declarations (no-class-assign)](http://eslint.org/docs/rules/no-class-assign)
+* [Disallow duplicate name in class members (no-dupe-class-members)](http://eslint.org/docs/rules/no-dupe-class-members)
+* [Disallow use of this/super before calling super() in constructors. (no-this-before-super)](http://eslint.org/docs/rules/no-this-before-super)
+* [Disallow unnecessary constructor (no-useless-constructor)](http://eslint.org/docs/rules/no-useless-constructor)
+* + [eslint-plugin-classes](https://www.npmjs.com/package/eslint-plugin-classes)
+
+and the chosen limitations that allows lighter, more readable, and faster code:
+
 2. It does not support expressions as parent class, only class/constructor names
-3. It does not support getter/setter (they often are bad patterns, source of bugs, leaks, performance failures)
-4. It does not throw errors if you invoke the constructor without the new keyword (Linters are good enough to check that)
-5. It does not check if you use `this` before calling `super()` (the babel parser already warn against that)
+3. It does not support getter/setter
+4. It does not throw errors if you invoke the constructor without the new keyword 
+5. It does not check if you use `this` before calling `super()` 
 6. It does not support nested classes (classes defined inside a class method)
+
+Last limitation
+
+* This transform plugin do not properly extends native Objects such as `Date`, `Array`, `Function`, etc
 
 ## Installation
 
