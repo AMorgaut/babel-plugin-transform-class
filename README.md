@@ -153,8 +153,8 @@ and the chosen limitations that allows lighter, more readable, and faster code:
 
 2. It does not support expressions as parent class, only class/constructor names
 3. It does not support getter/setter
-4. It does not throw errors if you invoke the constructor without the new keyword 
-5. It does not check if you use `this` before calling `super()` 
+4. It does not throw errors if you invoke the constructor without the new keyword (see rule [`"capIsNew": true`](http://eslint.org/docs/rules/new-cap#capisnew))
+5. It does not check if you use `this` before calling `super()` (see rule [`no-this-before-super: "error"`](http://eslint.org/docs/rules/no-this-before-super))
 6. It does not support nested classes (classes defined inside a class method)
 
 Last limitation
