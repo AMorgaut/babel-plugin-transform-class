@@ -42,7 +42,7 @@ Object.assign(MyClass, {/* static methods */});
 
 ### Prototype inheritance
 
-The prototype inheritance declared by the ES6 `extends` instruction use `Object.create()` to create the `prototype` of the class: `MyClass.prototype = Object.create(ParentClass.prototype);`. The class constructor is fixed back using `Object.assign()` along the method definitions.
+The prototype inheritance declared by the ES6 `extends` instruction use `Object.create()` to create the `prototype` of the class. The class constructor is fixed back using `Object.assign()` along the method definitions.
 
 ```js
 MyClass.prototype = Object.create(ParentClass.prototype);
