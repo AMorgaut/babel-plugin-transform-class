@@ -1,10 +1,10 @@
 # babel-plugin-transform-class
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/AMorgaut/babel-plugin-transform-class.svg)](https://greenkeeper.io/)
-[![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
+[![Greenkeeper badge](https://badges.greenkeeper.io/AMorgaut/babel-plugin-transform-class.svg)](https://greenkeeper.io/)
 [![Build Status](https://api.travis-ci.org/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
 [![Coverage Status](https://coveralls.io/repos/github/AMorgaut/babel-plugin-transform-class/badge.svg?branch=master)](https://coveralls.io/github/AMorgaut/babel-plugin-transform-class?branch=master)
+[![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 
 > A minimalist ES6 class babel transformer
 
@@ -12,7 +12,7 @@
 
 Transpiler are very powerful, but can be frustrating when generated code do not fit to what we'd like.
 
-Use this transform plugin if you like what it generates for you. The generated code is ES3 compliant as long as you also add [the 2 required polyfills](https://github.com/AMorgaut/babel-plugin-transform-class/wiki).
+Use this transform plugin if you like what it generates for you. [The generated code is ES3 compliant as long as you also add the 2 required polyfills](https://github.com/AMorgaut/babel-plugin-transform-class/wiki).
 
 So, this transform plugin purely concentrate itself on the ES6 class notation.
 
