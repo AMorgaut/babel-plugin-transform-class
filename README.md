@@ -1,4 +1,6 @@
 # babel-plugin-transform-class
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/AMorgaut/babel-plugin-transform-class.svg)](https://greenkeeper.io/)
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 [![NPM version](https://badge.fury.io/js/babel-plugin-transform-class.svg)](http://badge.fury.io/js/babel-plugin-transform-class)
 [![Build Status](https://api.travis-ci.org/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
