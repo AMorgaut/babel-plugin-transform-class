@@ -5,6 +5,7 @@ node_js:
   - v5
   - v4
   - "0.12"
+  - 10
 sudo: false
 cache:
   directories:
