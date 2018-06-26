@@ -5,6 +5,7 @@
 [![Build Status](https://api.travis-ci.org/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://travis-ci.org/AMorgaut/babel-plugin-transform-class)
 [![Coverage Status](https://coveralls.io/repos/github/AMorgaut/babel-plugin-transform-class/badge.svg?branch=master)](https://coveralls.io/github/AMorgaut/babel-plugin-transform-class?branch=master)
 [![NSP Status](https://nodesecurity.io/orgs/alexandre-morgaut/projects/743fd1f5-488f-48d6-9d07-ececc4ff6258/badge)](https://nodesecurity.io/orgs/alexandre-morgaut/projects/743fd1f5-488f-48d6-9d07-ececc4ff6258)
+[![Documentation Status](https://inch-ci.org/github/AMorgaut/babel-plugin-transform-class.svg?branch=master)](https://inch-ci.org/github/AMorgaut/babel-plugin-transform-class/history?branch=master)
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](#license)
 
 > A minimalist ES6 class babel transformer
