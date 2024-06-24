@@ -4,6 +4,25 @@ export default function (babel) {
   var visitor, _class;
 
   visitor = {
+    // EXPORT DECLARATIONS
+    ExportDefaultDeclaration(path) {
+      var declaration = path.node.declaration;
+      if (!t.isClassDeclaration(declaration)) {
+        return;
+      }
+      path.replaceWithMultiple([declaration, t.exportDefaultDeclaration(declaration.id)]);
+    },
+    ExportNamedDeclaration(path) {
+      var declaration = path.node.declaration;
+      if (!t.isClassDeclaration(declaration)) {
+        return;
+      }
+      var id = declaration.id;
+      path.replaceWithMultiple([
+        declaration,
+        t.exportNamedDeclaration(null, [t.ExportSpecifier(id, id)])
+      ]);
+    },
     // CLASS
     ClassDeclaration: {
       enter(path) {
