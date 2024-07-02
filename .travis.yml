@@ -1,16 +1,15 @@
 language: node_js
 node_js:
-  - "0.12"
-  - v4
-  - v5
   - v6
   - v7
   - v8
-  - 10
+  - v10
+  - v11
+  - v12
 sudo: false
 cache:
   directories:
     - node_modules
 script:
   - npm run test
-after_success: 'npm run coveralls'
+after_success: "npm run coveralls"
